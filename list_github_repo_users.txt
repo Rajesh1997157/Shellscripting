@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Script to list users with read access to a GitHub repository
+
+# Configuration
+GITHUB_TOKEN="your_personal_access_token"  # Replace with your GitHub PAT
+REPO_OWNER="owner_name"                   # Replace with repository owner (e.g., octocat)
+REPO_NAME="repo_name"                     # Replace with repository name (e.g., hello-world)
+
+# Validate inputs
+if [[ -z "$GITHUB_TOKEN" || "$GITHUB_TOKEN" == "your_personal_access_token" ]]; then
+    echo "Error: Please set a valid GITHUB_TOKEN."
+    exit 1
+fi
+if [[ -z "$REPO_OWNER" || -z "$REPO_NAME" ]]; then
+    echo "Error: Please set REPO_OWNER and REPO_NAME."
+    exit 1
+fi
+
+# GitHub API endpoint for collaborators
+ENDPOINT="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/collaborators"
+
+# Fetch collaborators with read access
+RESPONSE=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "$ENDPOINT")
+
+# Check for API errors
+if echo "$RESPONSE" | grep -q "message"; then
+    echo "Error: $(echo "$RESPONSE" | jq -r '.message')"
+    exit 1
+fi
+
+# Extract and display usernames with read access
+echo "Users with read access to ${REPO_OWNER}/${REPO_NAME}:"
+echo "$RESPONSE" | jq -r '.[] | select(.permissions.pull == true) | .login'
