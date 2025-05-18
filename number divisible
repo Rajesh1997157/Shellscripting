@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Script to print numbers divisible by 3 or 5, but not by 15
+
+# Define range (default: 1 to 100)
+start=1
+end=100
+
+# Validate that start and end are positive integers
+if [[ ! $start =~ ^[0-9]+$ || ! $end =~ ^[0-9]+$ || $start -gt $end ]]; then
+    echo "Error: Please ensure start and end are positive integers and start <= end."
+    exit 1
+fi
+
+echo "Numbers from $start to $end divisible by 3 or 5, but not by 15:"
+
+# Loop through the range
+for ((i=start; i<=end; i++)); do
+    # Check if number is divisible by 3 or 5
+    if [[ $((i % 3)) -eq 0 || $((i % 5)) -eq 0 ]]; then
+        # Ensure it's not divisible by 15
+        if [[ $((i % 15)) -ne 0 ]]; then
+            echo $i
+        fi
+    fi
+done
