@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Script to count the number of 's' letters in "Mississippi"
+
+# Define the word (case-insensitive handling)
+word="Mississippi"
+
+# Convert word to lowercase to count both 's' and 'S'
+word_lower=$(echo "$word" | tr '[:upper:]' '[:lower:]')
+
+# Count occurrences of 's' using grep and wc
+count=$(echo "$word_lower" | grep -o 's' | wc -l)
+
+# Check if count is valid (non-negative integer)
+if [[ ! $count =~ ^[0-9]+$ ]]; then
+    echo "Error: Unable to count letters."
+    exit 1
+fi
+
+# Display the result
+echo "The number of 's' letters in '$word' is: $count"
